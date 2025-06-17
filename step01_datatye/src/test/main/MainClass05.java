@@ -15,7 +15,7 @@ public static void main(String[] args) {
 	double num2=10.1;
 	boolean isRun=true;
 	//변수 안에 참조값이 들어가는 참조 데이터 type만 String
-	String yourName="해골";
+	String yourName="주뎅이";
 	
 }
 }
