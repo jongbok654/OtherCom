@@ -1,0 +1,27 @@
+package test.main;
+
+import test.company.Department;
+import test.company.Employee;
+import test.company.Manager;
+
+public class MainClass09 {
+	public static void main(String[] args) {
+		/*
+		 * 사언이름:King 급여:5000 부서명:기획부 부서의 위치:서울
+		 * 
+		 * 위의 정보를 가지느 Manager 객체를 생성해서 그 참조값을 m1 이라는 변수에 참고
+		 * 
+		 * m1.setPosition() 메소드를 활용해서 직위:이사 정보를 Manger 객체에 넣어보세요
+		 */
+		Manager m1 = new Manager("King", 5000, new Department("기획부", "서울"));
+		m1.setPosition("이사");
+		m1.printInfo();
+		// Manager는 Employee type 이기도 하다
+		Employee m2 = new Manager("king2", 5000, new Department("기획부", "서울"));
+		m2.printInfo();
+		//king2의 직위를 넣어주려면?
+		Manager m3 = (Manager)m2;//캐스팅!!
+		m3.setPosition("대리");
+		
+	}
+}
