@@ -18,7 +18,7 @@ import javax.swing.table.DefaultTableModel;
 import test.dao.MemberDao;
 import test.dto.MemberDto;
 
-public class MemberFrame extends JFrame {
+public class MemberFrame22 extends JFrame {
 
 	// 필요한 필드 정의
 	JTextField inputName, inputAddr;
@@ -31,7 +31,7 @@ public class MemberFrame extends JFrame {
 	// MemberDao를 자주 사용할 ㅇ예정이기 떄문에 미리 필드에 참조값 넣어두기
 	MemberDao dao = new MemberDao();
 
-	public MemberFrame() {
+	public MemberFrame22() {
 		// 레이아웃 설정
 		setLayout(new BorderLayout());
 
@@ -70,6 +70,7 @@ public class MemberFrame extends JFrame {
 			} else {
 				JOptionPane.showMessageDialog(this, "실패함");
 			}
+			printMember();
 
 		});
 
@@ -95,7 +96,6 @@ public class MemberFrame extends JFrame {
 		});
 
 		updateBtn.addActionListener((e) -> {
-
 			// 테이블의 row를 눌러서 선택하는 변수
 			int selectedRow = table.getSelectedRow();
 			// 만일 선택된 row가 없다면
@@ -103,33 +103,50 @@ public class MemberFrame extends JFrame {
 				JOptionPane.showMessageDialog(this, "수정할 row를 선택해주세요");
 				return; // 메소드를 여기서 끝내기(리턴하기)
 			}
+
+			// 선택한 row 에서 수정할 회원의 번호를 얻어낸다.
 			int num = (Integer) model.getValueAt(selectedRow, 0);
-			// 입력한 이름과 주소를 읽어와서
-			var name = inputName.getText();
-			var addr = inputAddr.getText();
+			// 수정할 회원의 전체 정보를 DB 에서 읽어본다
+			MemberDto dto = dao.getByNum(num);
 
-			// MemberDTO 객체에 이름과 주소 담기
+			// 수정양식 UI 를 JPanel 로 구성한다
+			var inputName = new JTextField(10);
+			var inputAddr = new JTextField(10);
+			JPanel editPanel = new JPanel();
+			editPanel.add(new JLabel("이름:"));
+			editPanel.add(inputName);
+			editPanel.add(new JLabel("주소:"));
+			editPanel.add(inputAddr);
+			// MemberDto 에 있는 정보를 JTextField 에 출력
+			inputName.setText(dto.getName());
+			inputAddr.setText(dto.getAddr());
+			
 
-			// 삭제할 회원의 primary key 값(번호)를 읽어오기
-
-			MemberDto dto = new MemberDto();
-			dto.setName(name);
-			dto.setAddr(addr);
-			dto.setNum(num);
-			var isSuccess = dao.update(dto);
-
-			if (isSuccess) {
-				// 여기서 this는 나의 참조값(나=> MemberFrame 객체 => Component type 임)
-				JOptionPane.showMessageDialog(this, "수정 했습니다.");
-				// OptionPane.showmessagedialog ==> 메시지창 출력함 ==> Component의 참조값을 띄움 => 여기서는
-				// this,"추가했습니다".
-			} else {
-				JOptionPane.showMessageDialog(this, "실패함");
+			// Jpanel 을 전달하면서 COnfirmDIalog 를 띄운다.
+			int result = JOptionPane.showConfirmDialog(this, editPanel, // 패널을 만듬 ==> 이름,주소 입력 창
+					num + " 번 회원 수정", // 여기는 이름
+					JOptionPane.OK_CANCEL_OPTION); // 확인,취소 버튼 생김
+			// 리턴되는 숫자값 확인해보기
+			System.out.println(result);
+			// 만일 확인 버튼 누른다면
+			if (result == JOptionPane.OK_OPTION) {
+				// 입력한 이름과 주소를 읽어오기
+				String name = inputName.getText();
+				String addr = inputAddr.getText();
+				// 수정 반영한다
+				MemberDto newDto = new MemberDto();
+				newDto.setNum(num);
+				newDto.setName(name);
+				newDto.setAddr(addr);
+				boolean isSuccess = dao.update(newDto);
+				if (isSuccess) {
+					JOptionPane.showMessageDialog(this, "수정 되었습니다");
+					printMember();
+				} else {
+					JOptionPane.showMessageDialog(this, "수정 실패함");
+				}
 			}
 
-			// 기존에 출력된 내용을 모두 삭제하고 싶을 때 이용하는 것
-
-			printMember();
 		});
 
 		// 패널에 UI 배치
